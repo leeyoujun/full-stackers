@@ -1,26 +1,20 @@
 <template>
-  <b-container>
-    <layout-parts-header />
+  <div>
+    <layout-parts-header class="sticky-top py-3 px-2 bg-white shadow-sm" />
 
-    <b-row>
-      <b-col>
-        <layout-parts-sidenav />
-      </b-col>
-      <b-col>
-        <nuxt />
-      </b-col>
-    </b-row>
+    <b-container>
+      <nuxt class="py-4" />
+    </b-container>
 
-    <layout-parts-footer />
-  </b-container>
+    <layout-parts-footer class="fixed-bottom py-3 px-2 bg-white shadow-sm" />
+  </div>
 </template>
 
 <script>
 import LayoutPartsHeader from '~/components/layout-parts/header'
-import LayoutPartsSidenav from '~/components/layout-parts/sidenav'
 import LayoutPartsFooter from '~/components/layout-parts/footer'
 
 export default {
-  components: { LayoutPartsHeader, LayoutPartsSidenav, LayoutPartsFooter },
+  components: { LayoutPartsHeader, LayoutPartsFooter },
 }
 </script>

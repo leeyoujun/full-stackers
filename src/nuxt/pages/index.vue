@@ -1,15 +1,10 @@
 <template>
   <div>
-    <h1>{{ welcome }}</h1>
+    <h1>Hello, World! :)</h1>
+    <h2>Content Area</h2>
   </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      welcome: 'Hello, Nuxt! :)',
-    }
-  },
-}
+export default {}
 </script>
