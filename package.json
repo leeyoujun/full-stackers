@@ -1,17 +1,18 @@
 {
-  "name": "rapidfire-example-nuxt",
+  "name": "fullstack-study",
   "version": "1.0.0",
-  "description": "Rapidfire Nuxt Example",
+  "description": "Fullstack Study Project",
   "main": "index.js",
   "scripts": {
     "start": "node src/index",
-    "dev": "node --inspect src/index",
+    "dev": "nodemon --inspect --ignore src/nuxt src/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "BEERWARE",
   "dependencies": {
+    "@elastic/elasticsearch": "^7.11.0",
     "@luasenvy/rapidfire": "^0.1.36",
     "nuxt": "^2.15.3"
   },
@@ -25,6 +26,7 @@
     "husky": "^5.1.3",
     "imagemin-lint-staged": "^0.4.0",
     "lint-staged": "^10.5.4",
+    "nodemon": "^2.0.7",
     "prettier": "^2.2.1"
   }
 }
