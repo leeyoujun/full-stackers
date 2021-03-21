@@ -16,7 +16,19 @@ class NuxtMiddleware extends Middleware {
   async init() {
     const isDev = this.$rapidfire.options.isDev
 
-    this.nuxt = new Nuxt({ telemetry: false, dev: isDev, srcDir: path.join(this.$rapidfire.env.paths.root, 'src/nuxt/') })
+    this.nuxt = new Nuxt({
+      telemetry: false,
+      dev: isDev,
+      srcDir: path.join(this.$rapidfire.env.paths.root, 'src/nuxt/'),
+      modules: ['@nuxtjs/axios', 'bootstrap-vue/nuxt'],
+      axios: {
+        baseURL: `${process.env.ALIOT_AJAX_PROTOCOL}://${process.env.ALIOT_AJAX_HOST}:${process.env.ALIOT_AJAX_PORT}`,
+      },
+      bootstrapVue: {
+        componentPlugins: ['LayoutPlugin'],
+        directivePlugins: ['VBTooltipPlugin'],
+      },
+    })
 
     await this.nuxt.ready()
 

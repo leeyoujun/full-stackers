@@ -1,8 +1,10 @@
 module.exports = {
   root: true,
   env: { node: true, es2021: true, browser: true },
-  parser: 'babel-eslint',
-  parserOptions: { ecmaVersion: 2021 },
+  parserOptions: {
+    parser: 'babel-eslint',
+    ecmaVersion: 2021,
+  },
   extends: ['eslint:recommended', 'plugin:vue/recommended', 'plugin:nuxt/recommended', 'plugin:prettier/recommended'],
   plugins: ['vue', 'nuxt', 'prettier'],
   // add your custom rules here
