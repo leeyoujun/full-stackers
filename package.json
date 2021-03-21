@@ -1,7 +1,7 @@
 {
-  "name": "fullstack-study",
+  "name": "full-stackers",
   "version": "1.0.0",
-  "description": "Fullstack Study Project",
+  "description": "Full-stackers StudyGroup Homepage Project",
   "main": "index.js",
   "scripts": {
     "start": "node src/index",
