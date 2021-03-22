@@ -55,6 +55,7 @@ function main() {
     paths: {
       loaders: path.join(__dirname, 'loaders'),
       services: path.join(__dirname, 'services'),
+      controllers: path.join(__dirname, 'controllers'),
       middlewares: path.join(__dirname, 'middlewares'),
     },
     dbs: [client],

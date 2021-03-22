@@ -1,5 +1,7 @@
 const ElasticsearchService = require('../../interfaces/ElasticsearchService')
 
+const BbsConfigService = require('../../services/admin/BbsConfigService')
+
 class PostService extends ElasticsearchService {
   static _docType = 'post'
 
@@ -13,6 +15,14 @@ class PostService extends ElasticsearchService {
     router.delete('/api/posts/:postId', (req, res, next) => this.deletePost(req, res).catch(next))
 
     this.router = router
+
+    this.bbsConfigService = null
+  }
+
+  async init() {
+    super.init()
+
+    this.bbsConfigService = this.$rapidfire.services.find(service => service instanceof BbsConfigService)
   }
 
   /**
@@ -45,17 +55,127 @@ class PostService extends ElasticsearchService {
 
     res.send(posts)
   }
+
   async getPost(req, res) {
-    res.status(200)
+    const { status, message } = await this.controller.validator({
+      params: req.params,
+      expressions: [{ key: 'postId', type: 'required' }],
+    })
+
+    if (status) return res.status(status).send(message)
+
+    const {
+      body: { _id, _source },
+    } = await this.elastic.get({ index: PostService.index, id: req.params.postId })
+
+    res.send({ _id, ..._source })
   }
+
   async createPost(req, res) {
-    res.status(201)
+    const { status, message } = await this.controller.validator({
+      params: req.body,
+      expressions: [
+        { key: 'bbsConfigId', type: 'required' },
+        { key: 'title', type: 'required' },
+        { key: 'content', type: 'required' },
+        { key: 'postId', type: 'required' },
+        // TODO: writerId는 반드시 필요하도록 추후 작업
+        // { key: 'writerId', type: 'required' },
+        {
+          key: 'bbsConfigId',
+          type: 'fn',
+          fn: async ({ value: bbsConfigId }) => {
+            const {
+              body: { count },
+            } = await this.elastic.count({
+              index: this.bbsConfigService.constructor.index,
+              body: {
+                query: {
+                  match: { _id: bbsConfigId },
+                },
+              },
+            })
+
+            if (count <= 0) return { status: 400, message: `"${bbsConfigId}" 서비스가 존재하지 않습니다.` }
+          },
+        },
+      ],
+    })
+
+    if (status) return res.status(status).send(message)
+
+    const { bbsConfigId, title, content, writerId, view = 0, categories = [], like = 0, dislike = 0, comments = [] } = req.body
+
+    const {
+      body: { _id: createdId },
+    } = await this.elastic.index({
+      index: PostService.index,
+      refresh: 'wait_for',
+      body: {
+        docType: PostService.docType,
+        data: {
+          bbsConfigId,
+          title,
+          content,
+          writerId,
+          view,
+          categories,
+          like,
+          dislike,
+          comments,
+          createdAt: new Date(),
+        },
+      },
+    })
+
+    res.status(201).send({ createdId })
   }
+
   async updatePost(req, res) {
-    res.status(200)
+    const { status, message } = await this.controller.validator({
+      params: req.body,
+      expressions: [
+        { key: '_id', type: 'required' },
+        { key: 'bbsConfigId', type: 'required' },
+        { key: 'title', type: 'required' },
+        { key: 'content', type: 'required' },
+        { key: 'postId', type: 'required' },
+      ],
+    })
+
+    if (status) return res.status(status).send(message)
+
+    const { _id, bbsConfigId, title, content, writerId, view = 0, categories = [], like = 0, dislike = 0, comments = [] } = req.body
+
+    await this.elastic.update({
+      index: PostService.index,
+      refresh: 'wait_for',
+      id: _id,
+      body: {
+        doc: {
+          docType: PostService.docType,
+          data: {
+            bbsConfigId,
+            title,
+            content,
+            writerId,
+            view,
+            categories,
+            like,
+            dislike,
+            comments,
+            updatedAt: new Date(),
+          },
+        },
+      },
+    })
+
+    res.sendStatus(204)
   }
+
   async deletePost(req, res) {
-    res.status(204)
+    await this.elastic.delete({ index: PostService.index, id: req.params.postId })
+    res.sendStatus(204)
   }
 }
 

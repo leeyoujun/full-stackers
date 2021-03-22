@@ -1,10 +1,14 @@
 const Service = require('./Service')
+const Controller = require('../controllers/Controller')
 
 const ElasticsearchServiceLoader = require('../loaders/ElasticsearchServiceLoader')
 
 class ElasticsearchService extends Service {
   // loader
   static loader = ElasticsearchServiceLoader
+
+  // controller
+  static controller = Controller
 
   // elasticsearch index
   static _index = ''
