@@ -7,6 +7,8 @@ const { Client: Elasticsearch } = require('@elastic/elasticsearch')
 const cmdParams = process.argv.filter(arg => arg.startsWith('--')).map(arg => arg.replace(/^--/, ''))
 
 const {
+  'service-bind': cmdBind,
+  'service-port': cmdPort,
   'elasticsearch-node': cmdElasticsearchNode,
   'elasticsearch-username': cmdElasticsearchUsername,
   'elasticsearch-password': cmdElasticsearchPassword,
@@ -16,6 +18,8 @@ const {
 }, {})
 
 const options = {
+  bind: process.env.FULLSTACKER_BIND || cmdBind || '127.0.0.1',
+  port: process.env.FULLSTACKER_PORT || cmdPort || 8000,
   elasticsearch: {
     connection: {
       node: process.env.FULLSTACKER_ELASTIC_NODE || cmdElasticsearchNode,
@@ -37,6 +41,8 @@ const fn = {
 
 function main() {
   const {
+    bind,
+    port,
     elasticsearch: { connection: elasticsearchConnection },
   } = app.options
 
@@ -44,8 +50,8 @@ function main() {
   const client = fn.makeDatabaseConnection({ options: elasticsearchConnection })
 
   const rapidFire = new RapidFire({
-    host: 'localhost',
-    port: 8000,
+    host: bind,
+    port: port,
     paths: {
       loaders: path.join(__dirname, 'loaders'),
       services: path.join(__dirname, 'services'),

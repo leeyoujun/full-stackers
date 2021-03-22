@@ -7,6 +7,7 @@
         <b-nav-item to="/blog">블로그</b-nav-item>
         <b-nav-item to="/bbs">게시판</b-nav-item>
         <b-nav-item to="/admin">관리자</b-nav-item>
+        <b-nav-item to="/example">예제</b-nav-item>
 
         <!-- Navbar dropdowns -->
         <b-nav-item-dropdown text="메뉴 1" right>

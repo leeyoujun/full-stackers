@@ -8,8 +8,10 @@
 
 <script>
 export default {
-  computed() {
-    return new Date().getFullYear()
+  data() {
+    return {
+      year: new Date().getFullYear(),
+    }
   },
 }
 </script>
