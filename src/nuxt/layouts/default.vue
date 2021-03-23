@@ -1,6 +1,6 @@
 <template>
   <div>
-    <layout-parts-header class="sticky-top py-3 px-2 bg-white shadow-sm" />
+    <layout-parts-header />
 
     <b-container class="pb-4">
       <nuxt class="py-4" />
