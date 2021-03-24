@@ -44,6 +44,7 @@
               :src="`https://picsum.photos/${250}/${250}/?image=${10 * idx}`"
               alt="Image 1"
             ></b-img>
+            <p class="thumbnail-title">{{ post.title }}</p>
           </b-col>
         </b-row>
       </b-container>
@@ -143,5 +144,11 @@ export default {
 #btn-group-render-type > button:hover {
   background: #5a6168;
   color: white;
+}
+
+.thumbnail-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
