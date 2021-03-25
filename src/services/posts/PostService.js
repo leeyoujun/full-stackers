@@ -9,7 +9,9 @@ class PostService extends ElasticsearchService {
     super()
 
     router.get('/api/posts', (req, res, next) => this.getPosts(req, res).catch(next))
+    router.get('/api/posts/paginate', (req, res, next) => this.getPaginatedPosts(req, res).catch(next))
     router.get('/api/posts/:postId', (req, res, next) => this.getPost(req, res).catch(next))
+
     router.post('/api/posts', (req, res, next) => this.createPost(req, res).catch(next))
     router.put('/api/posts', (req, res, next) => this.updatePost(req, res).catch(next))
     router.delete('/api/posts/:postId', (req, res, next) => this.deletePost(req, res).catch(next))
@@ -56,8 +58,43 @@ class PostService extends ElasticsearchService {
     res.send(posts)
   }
 
+  async getPaginatedPosts(req, res) {
+    const { status, message } = await this.controller.validate({
+      params: req.query,
+      expressions: [
+        { key: 'from', type: 'required' },
+        { key: 'size', type: 'required' },
+        { key: 'from', type: 'number' },
+        { key: 'size', type: 'number' },
+      ],
+    })
+    if (status) return res.status(status).send(message)
+
+    const { from, size } = req.query
+
+    const response = await this.elastic.search({
+      index: PostService.index,
+      from,
+      size,
+      body: {
+        query: {
+          match_all: {},
+        },
+        sort: {
+          'data.createdAt': {
+            order: 'desc',
+          },
+        },
+      },
+    })
+
+    const { total, rows } = this.simplify(response)
+
+    res.send({ total, rows })
+  }
+
   async getPost(req, res) {
-    const { status, message } = await this.controller.validator({
+    const { status, message } = await this.controller.validate({
       params: req.params,
       expressions: [{ key: 'postId', type: 'required' }],
     })
@@ -72,7 +109,7 @@ class PostService extends ElasticsearchService {
   }
 
   async createPost(req, res) {
-    const { status, message } = await this.controller.validator({
+    const { status, message } = await this.controller.validate({
       params: req.body,
       expressions: [
         { key: 'bbsConfigId', type: 'required' },
@@ -132,7 +169,7 @@ class PostService extends ElasticsearchService {
   }
 
   async updatePost(req, res) {
-    const { status, message } = await this.controller.validator({
+    const { status, message } = await this.controller.validate({
       params: req.body,
       expressions: [
         { key: '_id', type: 'required' },
