@@ -5,6 +5,7 @@ module.exports = {
     parser: 'babel-eslint',
     ecmaVersion: 2021,
   },
+  ignorePatterns: ['src/nuxt.config.js'],
   extends: ['eslint:recommended', 'plugin:vue/recommended', 'plugin:nuxt/recommended', 'plugin:prettier/recommended'],
   plugins: ['vue', 'nuxt', 'prettier'],
   // add your custom rules here
