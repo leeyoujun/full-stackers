@@ -85,11 +85,20 @@ export default {
     };
   },
   async mounted() {
-    const { data: bbs } = await this.$axios.get("/api/configs/bbs");
-    console.log("bbs", bbs);
-    const { data: posts } = await this.$axios.get("/api/posts");
-    this.posts = posts.slice(0, 10);
-    console.log("posts", posts);
+    //! 게시판, 블로그 등 카테고리 구분지을 필요 있다면
+    // const { data: bbs } = await this.$axios.get("/api/configs/bbs");
+    // console.log("bbs", bbs);
+
+    //! pagination api로 개수 10개 제한해서 가져오기
+    // const { data: posts } = await this.$axios.get("/api/posts");
+    const size = 10;
+    const {
+      data: { total, rows },
+    } = await this.$axios.get("/api/posts/paginate", {
+      params: { from: 0, size },
+    });
+
+    this.posts = rows; //posts
   },
 
   methods: {
@@ -124,8 +133,7 @@ export default {
   padding: 0;
 }
 
-#btn-group-render-type > #btn-group-render-type:not(:last-child) > button
-/* #btn-group-render-type > button:not(:last-child):not(.dropdown-toggle)  */ {
+#btn-group-render-type > #btn-group-render-type:not(:last-child) > button {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -136,7 +144,6 @@ export default {
   border: 1px solid #6c757d;
   padding: 0.375rem 0.75rem;
 
-  /* border-radius: 0.25rem; */
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
