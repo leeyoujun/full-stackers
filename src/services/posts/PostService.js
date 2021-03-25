@@ -64,13 +64,15 @@ class PostService extends ElasticsearchService {
       expressions: [
         { key: 'from', type: 'required' },
         { key: 'size', type: 'required' },
+        { key: 'bbsConfigId', type: 'required' },
         { key: 'from', type: 'number' },
         { key: 'size', type: 'number' },
       ],
     })
+
     if (status) return res.status(status).send(message)
 
-    const { from, size } = req.query
+    const { bbsConfigId, from, size } = req.query
 
     const response = await this.elastic.search({
       index: PostService.index,
@@ -78,13 +80,11 @@ class PostService extends ElasticsearchService {
       size,
       body: {
         query: {
-          match_all: {},
-        },
-        sort: {
-          'data.createdAt': {
-            order: 'desc',
+          bool: {
+            must: [{ match: { 'docType.keyword': PostService.docType } }, { match: { 'data.bbsConfigId.keyword': bbsConfigId } }],
           },
         },
+        sort: { 'data.seq': { order: 'desc' } },
       },
     })
 
@@ -133,7 +133,7 @@ class PostService extends ElasticsearchService {
               },
             })
 
-            if (count <= 0) return { status: 400, message: `"${bbsConfigId}" 서비스가 존재하지 않습니다.` }
+            if (count <= 0) return { status: 400, message: `"${bbsConfigId}" 게시판이 존재하지 않습니다.` }
           },
         },
       ],
