@@ -16,12 +16,7 @@
           <b-container>
             <b-row>
               <b-col cols="2">
-                <b-img
-                  thumbnail
-                  fluid
-                  :src="`https://picsum.photos/${90}/${90}/?image=${10 * idx}`"
-                  alt="Image 1"
-                ></b-img>
+                <b-img thumbnail fluid :src="`https://picsum.photos/${90}/${90}/?image=${10 * idx}`" alt="Image 1"></b-img>
               </b-col>
               <b-col>
                 <h4>{{ post.title }}</h4>
@@ -37,13 +32,8 @@
     <section v-else>
       <b-container fluid class="p-4">
         <b-row>
-          <b-col cols="4" v-for="(post, idx) of posts" :key="post._id">
-            <b-img
-              thumbnail
-              fluid
-              :src="`https://picsum.photos/${250}/${250}/?image=${10 * idx}`"
-              alt="Image 1"
-            ></b-img>
+          <b-col v-for="(post, idx) of posts" :key="post._id" cols="4">
+            <b-img thumbnail fluid :src="`https://picsum.photos/${250}/${250}/?image=${10 * idx}`" alt="Image 1"></b-img>
             <p class="thumbnail-title">{{ post.title }}</p>
           </b-col>
         </b-row>
@@ -53,18 +43,7 @@
 </template>
 
 <script>
-import {
-  BListGroup,
-  BListGroupItem,
-  BImg,
-  BContainer,
-  BRow,
-  BCol,
-  BIcon,
-  BIconArrowUp,
-  BIconCardList,
-  BIconImages,
-} from "bootstrap-vue";
+import { BListGroup, BListGroupItem, BImg, BContainer, BRow, BCol, BIconCardList, BIconImages } from 'bootstrap-vue'
 export default {
   components: {
     BListGroup,
@@ -73,16 +52,25 @@ export default {
     BContainer,
     BRow,
     BCol,
-    BIcon,
-    BIconArrowUp,
     BIconCardList,
     BIconImages,
+  },
+  props: {
+    slug: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       posts: [],
-      renderType: "list",
-    };
+      renderType: 'thumbnail',
+    }
+  },
+  computed: {
+    bbsConfigId() {
+      return this.$store.state.bbsConfigs.configs.find(({ slug }) => this.slug === slug)?._id
+    },
   },
   async mounted() {
     //! 게시판, 블로그 등 카테고리 구분지을 필요 있다면
@@ -91,39 +79,37 @@ export default {
 
     //! pagination api로 개수 10개 제한해서 가져오기
     // const { data: posts } = await this.$axios.get("/api/posts");
-    const size = 10;
+    const size = 10
     const {
-      data: { total, rows },
-    } = await this.$axios.get("/api/posts/paginate", {
-      params: { from: 0, size },
-    });
+      data: { rows },
+    } = await this.$axios.get('/api/posts/paginate', {
+      params: { bbsConfigId: this.bbsConfigId, from: 0, size },
+    })
 
-    this.posts = rows; //posts
+    this.posts = rows //posts
   },
 
   methods: {
     date_to_str(timestamp) {
-      const format = new Date(timestamp);
-      var year = format.getFullYear();
-      var month = format.getMonth() + 1;
-      if (month < 10) month = "0" + month;
-      var date = format.getDate();
-      if (date < 10) date = "0" + date;
-      var hour = format.getHours();
-      if (hour < 10) hour = "0" + hour;
-      var min = format.getMinutes();
-      if (min < 10) min = "0" + min;
-      var sec = format.getSeconds();
-      if (sec < 10) sec = "0" + sec;
-      return (
-        year + "-" + month + "-" + date + " " + hour + ":" + min + ":" + sec
-      );
+      const format = new Date(timestamp)
+      var year = format.getFullYear()
+      var month = format.getMonth() + 1
+      if (month < 10) month = '0' + month
+      var date = format.getDate()
+      if (date < 10) date = '0' + date
+      var hour = format.getHours()
+      if (hour < 10) hour = '0' + hour
+      var min = format.getMinutes()
+      if (min < 10) min = '0' + min
+      var sec = format.getSeconds()
+      if (sec < 10) sec = '0' + sec
+      return year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec
     },
     toggleRenderType(e, type) {
-      this.renderType = type;
+      this.renderType = type
     },
   },
-};
+}
 </script>
 
 <style>
@@ -144,8 +130,7 @@ export default {
   border: 1px solid #6c757d;
   padding: 0.375rem 0.75rem;
 
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 #btn-group-render-type > button:hover {

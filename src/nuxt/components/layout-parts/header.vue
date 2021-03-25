@@ -5,7 +5,7 @@
 
       <b-navbar-nav>
         <b-nav-item-dropdown text="블로그" right>
-          <b-dropdown-item v-for="({ title, slug }, $index) in blogs" :key="$index" :to="`/bbs/${slug}`">
+          <b-dropdown-item v-for="({ title, slug }, $index) in blogs" :key="$index" :to="`/blog/${slug}`">
             {{ title }}
           </b-dropdown-item>
         </b-nav-item-dropdown>

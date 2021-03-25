@@ -19,7 +19,7 @@ try {
 module.exports = {
   telemetry: false,
   dev: process.env.NODE_ENV !== 'production',
-  srcDir: 'nuxt/',
+  srcDir: path.join(__dirname, 'nuxt/'),
   buildDir: path.join(__dirname, '../.nuxt/'),
   modules: ['@nuxtjs/axios', 'bootstrap-vue/nuxt'],
   plugins: [{ src: '~plugins/axios' }],
