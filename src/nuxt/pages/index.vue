@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <h1>Hello, World! :)</h1>
-    <h2>Content Area</h2>
+  <div class="pb-5">
+    <recent slug="blog" />
   </div>
 </template>
 
 <script>
-export default {}
+import recent from '~/components/blog/recent'
+
+export default {
+  components: { recent },
+}
 </script>
