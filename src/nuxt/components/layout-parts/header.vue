@@ -4,11 +4,19 @@
       <b-navbar-brand to="/">Full Stackers</b-navbar-brand>
 
       <b-navbar-nav>
-        <b-nav-item to="/blog">블로그</b-nav-item>
-        <b-nav-item to="/bbs">게시판</b-nav-item>
+        <b-nav-item-dropdown text="블로그" right>
+          <b-dropdown-item v-for="({ title, slug }, $index) in blogs" :key="$index" :to="`/blog/${slug}`">
+            {{ title }}
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+
+        <b-nav-item-dropdown text="게시판" right>
+          <b-dropdown-item v-for="({ title, slug }, $index) in bbses" :key="$index" :to="`/bbs/${slug}`">
+            {{ title }}
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
         <b-nav-item to="/admin">관리자</b-nav-item>
 
-        <!-- Navbar dropdowns -->
         <b-nav-item-dropdown text="예제" right>
           <b-dropdown-item to="/example-bootstrap-vue-with-axios">부트스트랩과 Axios</b-dropdown-item>
           <b-dropdown-item to="/example-custom-component">사용자 정의 컴포넌트</b-dropdown-item>
@@ -25,5 +33,16 @@ import { BNavbar, BNavbarBrand, BNavbarNav, BNavItem, BNavItemDropdown, BDropdow
 
 export default {
   components: { BNavbar, BNavbarBrand, BNavbarNav, BNavItem, BNavItemDropdown, BDropdownItem },
+  computed: {
+    stateBbsConfigs() {
+      return this.$store.state.bbsConfigs.configs || []
+    },
+    blogs() {
+      return this.stateBbsConfigs.filter(({ type }) => type === 'blog')
+    },
+    bbses() {
+      return this.stateBbsConfigs.filter(({ type }) => type === 'bbs')
+    },
+  },
 }
 </script>

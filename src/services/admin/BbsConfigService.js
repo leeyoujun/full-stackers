@@ -69,6 +69,29 @@ class BbsConfigService extends ElasticsearchService {
         { key: 'title', type: 'required' },
         { key: 'slug', type: 'required' },
         { key: 'type', type: 'required' },
+        {
+          key: 'slug',
+          type: 'fn',
+          fn: async ({ value: slug }) => {
+            const {
+              body: { count },
+            } = this.elastic.count({
+              index: BbsConfigService.index,
+              body: {
+                query: {
+                  bool: {
+                    match: {
+                      'docType.keyword': BbsConfigService,
+                      'data.slug.keyword': slug,
+                    },
+                  },
+                },
+              },
+            })
+
+            if (count > 0) return { status: 409, message: `"${slug}" 슬러그는 이미 존재합니다.` }
+          },
+        },
       ],
     })
 

@@ -1,5 +1,21 @@
 import qs from 'qs'
 
+let port = 8000
+
+try {
+  const { port: _port } = require('../../.config.js')
+  port = _port
+} catch {
+  const cmdParams = process.argv.filter(arg => arg.startsWith('--')).map(arg => arg.replace(/^--/, ''))
+
+  const { 'service-port': cmdPort } = cmdParams.reduce((acc, param) => {
+    const [key, val] = param.split('=')
+    return Object.assign(acc, { [`${key}`]: val })
+  }, {})
+
+  port = process.env.FULLSTACKER_SERVICE_PORT || cmdPort
+}
+
 export default function (context) {
   const { $axios } = context
 
@@ -7,7 +23,7 @@ export default function (context) {
 
   $axios.interceptors.request.use(options => {
     if (process.server) {
-      options.baseURL = 'http://127.0.0.1:8000'
+      options.baseURL = `http://127.0.0.1:${port}`
     } else {
       // 클라우드 환경을 위하여 브라우저 환경에서 자동으로 설정되도록 수정
       //   * baseURL이 설정되어있어도 URL에 호스트명이 포함되어있으면 무시되므로
